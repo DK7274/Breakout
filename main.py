@@ -89,6 +89,31 @@ while not game_over:
         continue
     # screen edge effect
 
+    # brick hits
+    delete_brick = None
+    for b in bricks:
+        bx,by = b  # get the vals of the brick
+        if bx <= ball_rect[0] <= bx + brick_rect.width and by <= ball_rect[1] <= by + brick_rect.height and \
+        by <= ball_rect[1] <= by + brick_rect.height:
+            delete_brick = b
+
+            if ball_rect[0] <= bx + 2:
+                sx *= -1
+            elif ball_rect[0] >= bx + brick_rect.width - 2:
+                sx *= -1
+            if ball_rect[1] <= by + 2:
+                sy *= -1
+            elif ball_rect[1] >= by + brick_rect.height - 2:
+                sy *= -1
+            break
+
+    if delete_brick is not None:
+        bricks.remove(delete_brick)
+
+    #the None keyword is used to define a null value, or no value at all
+    # None is not the same as 0, False, or an empty string.
+    #None is a data type of its own (NoneType) and only None can be None
+
     #top
 
     if ball_rect[1] <=0: # Y pos
@@ -98,9 +123,10 @@ while not game_over:
     #bottom
 
     if ball_rect[1] >= screen.get_height() - ball_rect.height:
-        ball_rect[1] = screen.get_height() - ball_rect.height
-        sy *= -1
+       # ball_rect[1] = screen.get_height() - ball_rect.height
+       # sy *= -1
         ball_served = False
+        ball_rect.topleft = ball_start
 
     #left
     if ball_rect[0] <=0:
@@ -122,6 +148,9 @@ while not game_over:
 
     screen.blit(bat,bat_rect) #updates position of the bat
     bat_rect[0] = x
+    if ball_served:
+        ball_rect[0] += sx
+        ball_rect[1] += sy
     pygame.display.update()
 
 pygame.quit()
