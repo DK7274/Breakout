@@ -1,10 +1,11 @@
 import pygame
-from pygame import K_RIGHT, K_LEFT
+from pygame.locals import*
 # rect is for rectangle properties, (0 = left, 1 = top, 2 = width, 3 = height)
 pygame.init()
-screen = pygame.display.set_mode((1000,1000)) #sets size of window
+
+screen = pygame.display.set_mode((1000,950)) #sets size of window
 backdrop = pygame.image.load("Images/gorrila.jpg").convert() #loads monkey
-backdrop = pygame.transform.scale(backdrop,(1000,1000)) #resizes image
+backdrop = pygame.transform.scale(backdrop,(1000,950)) #resizes image
 pygame.display.set_caption("Breaking Out") #names window
 backdropbox = screen.get_rect()
 
@@ -52,9 +53,11 @@ while not game_over:
         screen.blit(brick,b) #loads all the bricks into the scene in a looping array
     screen.blit(bat,bat_rect)
     screen.blit(ball,ball_rect)
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             game_over = True
+
     pressed = pygame.key.get_pressed()
     if pressed[K_LEFT]:
         x -=1*dt
@@ -64,6 +67,59 @@ while not game_over:
 
     if pressed[K_SPACE]:
         ball_served = True
+
+    if bat_rect[0] + bat_rect.width >= ball_rect[0] >= bat_rect[0] and \
+        ball_rect[1] + ball_rect.width >= bat_rect[1] and \
+        sy > 0: #when bat hit ball it reverts all movement
+        sy *= -1
+
+        #speed up when hit ball and limit speed to 10
+        if sx > 10:
+            sx = 10
+        if sx < -10:
+            sx = -10
+        if sy > 10:
+            sy = 10
+        if sy < -10:
+            sy = -10
+        else:
+            sx *= 1.5
+            sy *= 1.5
+
+        continue
+    # screen edge effect
+
+    #top
+
+    if ball_rect[1] <=0: # Y pos
+        ball_rect[1] = 0
+        sy *= -1 # flips direction
+
+    #bottom
+
+    if ball_rect[1] >= screen.get_height() - ball_rect.height:
+        ball_rect[1] = screen.get_height() - ball_rect.height
+        sy *= -1
+        ball_served = False
+
+    #left
+    if ball_rect[0] <=0:
+        ball_rect[0] = 0
+        sx *= -1
+    #right
+    if ball_rect[0] >= screen.get_width() - ball_rect.width:
+        ball_rect[0] = screen.get_width()  - ball_rect.width
+        sx *= -1
+        # move ball after space is pressed
+
+
+    #move the ball
+    ball_rect[0]: x #get position of ball
+
+    if ball_served:
+        ball_rect[0] += sx # move left
+        ball_rect[1] += sy # move right
+
     screen.blit(bat,bat_rect) #updates position of the bat
     bat_rect[0] = x
     pygame.display.update()
