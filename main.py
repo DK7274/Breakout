@@ -3,7 +3,7 @@ from pygame import K_RIGHT, K_LEFT
 # rect is for rectangle properties, (0 = left, 1 = top, 2 = width, 3 = height)
 pygame.init()
 screen = pygame.display.set_mode((1000,1000)) #sets size of window
-backdrop = pygame.image.load("Images/gorrila.jpg") #loads monkey
+backdrop = pygame.image.load("Images/gorrila.jpg").convert() #loads monkey
 backdrop = pygame.transform.scale(backdrop,(1000,1000)) #resizes image
 pygame.display.set_caption("Breaking Out") #names window
 backdropbox = screen.get_rect()
@@ -44,7 +44,7 @@ x=0
 screen.blit(backdrop,backdropbox)
 
 while not game_over:
-    dt = clock.tick(60)
+    dt = clock.tick(50)
     # now blit backdrop onto backdropbox
     screen.fill((0,0,0))
     screen.blit(backdrop,(0,0))
@@ -62,6 +62,8 @@ while not game_over:
     if pressed[K_RIGHT]:
         x += 1*dt
 
+    if pressed[K_SPACE]:
+        ball_served = True
     screen.blit(bat,bat_rect) #updates position of the bat
     bat_rect[0] = x
     pygame.display.update()
